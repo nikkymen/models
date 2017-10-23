@@ -67,6 +67,8 @@ with contents:
  + saved_model (a directory)
 """
 import tensorflow as tf
+import os
+
 from google.protobuf import text_format
 from object_detection import exporter
 from object_detection.protos import pipeline_pb2
@@ -89,6 +91,10 @@ FLAGS = flags.FLAGS
 
 
 def main(_):
+
+  # we don`t need GPU for this
+  os.environ['CUDA_VISIBLE_DEVICES'] = ''
+
   assert FLAGS.pipeline_config_path, '`pipeline_config_path` is missing'
   assert FLAGS.trained_checkpoint_prefix, (
          '`trained_checkpoint_prefix` is missing')
