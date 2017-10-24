@@ -32,7 +32,7 @@ from object_detection.utils import ops as util_ops
 from object_detection.utils import variables_helper
 from deployment import model_deploy
 
-slim = tf.contrib.slim
+import tensorflow.contrib.slim as slim
 
 
 def _create_input_queue(batch_size_per_clone, create_tensor_dict_fn,
@@ -275,10 +275,14 @@ def train(create_tensor_dict_fn, create_model_fn, train_config, master, task,
     session_config = tf.ConfigProto(allow_soft_placement=True,
                                     log_device_placement=False)
 
+    #session_config.gpu_options.per_process_gpu_memory_fraction = 0.6
+    #session_config.gpu_options.allow_growth = True
+
     # Save checkpoints regularly.
     keep_checkpoint_every_n_hours = train_config.keep_checkpoint_every_n_hours
     saver = tf.train.Saver(
-        keep_checkpoint_every_n_hours=keep_checkpoint_every_n_hours)
+        keep_checkpoint_every_n_hours=keep_checkpoint_every_n_hours,
+        max_to_keep=0)
 
     slim.learning.train(
         train_tensor,
@@ -293,4 +297,5 @@ def train(create_tensor_dict_fn, create_model_fn, train_config, master, task,
             train_config.num_steps if train_config.num_steps else None),
         save_summaries_secs=120,
         sync_optimizer=sync_optimizer,
-        saver=saver)
+        saver=saver,
+        save_interval_secs=1800)
