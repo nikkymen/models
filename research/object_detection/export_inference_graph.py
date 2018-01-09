@@ -55,6 +55,7 @@ python export_inference_graph \
     --pipeline_config_path path/to/ssd_inception_v2.config \
     --trained_checkpoint_prefix path/to/model.ckpt \
     --output_directory path/to/exported_model_directory
+    --input_shape=-1,-1,-1,3
 
 The expected output would be in the directory
 path/to/exported_model_directory (which is created if it does not exist)
@@ -67,6 +68,8 @@ with contents:
  + saved_model (a directory)
 """
 import tensorflow as tf
+import os
+
 from google.protobuf import text_format
 from object_detection import exporter
 from object_detection.protos import pipeline_pb2
@@ -118,6 +121,21 @@ def main(_):
                                   FLAGS.trained_checkpoint_prefix,
                                   FLAGS.output_directory, input_shape)
 
+  # total_parameters = 0
+  #
+  # for variable in tf.trainable_variables():
+  #     # shape is an array of tf.Dimension
+  #     shape = variable.get_shape()
+  #     print(shape)
+  #     print(len(shape))
+  #     variable_parameters = 1
+  #     for dim in shape:
+  #         print(dim)
+  #         variable_parameters *= dim.value
+  #     print(variable_parameters)
+  #     total_parameters += variable_parameters
+  #
+  # print('total params: ', total_parameters)
 
 if __name__ == '__main__':
   tf.app.run()
